@@ -18,3 +18,12 @@ def getUsuarios():
     usuarios.append(usuario)
   
   return usuarios
+
+def getUsuario(login):
+  usuarios = getUsuarios()
+
+  for usuario in usuarios:
+    if usuario['login'] == login:
+      return usuario
+  
+  return None

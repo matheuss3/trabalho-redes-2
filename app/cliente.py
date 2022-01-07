@@ -2,6 +2,8 @@ from socket import *
 import json
 import struct
 
+from mensagens import MensagemAutenticacao
+
 # Exemplo de cliente
 cliente = {
   'id': 1,
@@ -19,10 +21,8 @@ senha = input('Digite sua senha: ') # 10 String
 
 tcp = socket(AF_INET, SOCK_STREAM)
 tcp.connect((HOST, PORT))
-codMensagem = 1
-mensagemSerializada = struct.pack('!I20s10s', codMensagem, login.encode(), senha.encode())
-print(mensagemSerializada)
+mensagemAutenticacao = MensagemAutenticacao()
 
-tcp.send(mensagemSerializada)
+tcp.send(mensagemAutenticacao.pack(login, senha))
 
 input()
