@@ -6,7 +6,7 @@ class Mensagem:
 		self.tamanho = tamanho
 		self.formato = formato
 
-class MensagemAutenticacao(Mensagem):
+class AutenticacaoReq(Mensagem):
 	login = None
 	senha = None
 

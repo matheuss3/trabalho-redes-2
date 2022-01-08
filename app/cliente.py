@@ -2,7 +2,7 @@ from socket import *
 import json
 import struct
 
-from mensagens import MensagemAutenticacao
+from mensagens import AutenticacaoReq
 
 # Exemplo de cliente
 cliente = {
@@ -21,7 +21,7 @@ senha = input('Digite sua senha: ') # 10 String
 
 tcp = socket(AF_INET, SOCK_STREAM)
 tcp.connect((HOST, PORT))
-mensagemAutenticacao = MensagemAutenticacao()
+mensagemAutenticacao = AutenticacaoReq()
 
 tcp.send(mensagemAutenticacao.pack(login, senha))
 

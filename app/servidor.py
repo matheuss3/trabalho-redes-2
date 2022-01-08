@@ -1,5 +1,5 @@
 from socket import *
-from mensagens import MensagemAutenticacao
+from mensagens import AutenticacaoReq
 import util
 import _thread
 import struct
@@ -18,7 +18,7 @@ CODING = 'UTF-8'
 
 
 def atendeCliente(conexao, cliente):
-  mensagemAutenticacao = MensagemAutenticacao()
+  mensagemAutenticacao = AutenticacaoReq()
   mensagemAutenticacao.unpack(conexao.recv(34))
 
   # token = autenticaClientes(login.decode(), senha.decode())
