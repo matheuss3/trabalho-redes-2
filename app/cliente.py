@@ -1,8 +1,6 @@
 from socket import *
-import json
-import struct
 
-from mensagens import AutenticacaoReq
+from mensagens import AutenticacaoReq, AutenticacaoRes
 
 # Exemplo de cliente
 cliente = {
@@ -16,13 +14,17 @@ cliente = {
 HOST = 'localhost'
 PORT = 3333
 
-login = input('Informe o login: ') # 20 String 
-senha = input('Digite sua senha: ') # 10 String
-
 tcp = socket(AF_INET, SOCK_STREAM)
 tcp.connect((HOST, PORT))
-mensagemAutenticacao = AutenticacaoReq()
 
+# Realizando login
+login = input('Informe o login: ') # 20 String 
+senha = input('Digite sua senha: ') # 10 String
+mensagemAutenticacao = AutenticacaoReq()
 tcp.send(mensagemAutenticacao.pack(login, senha))
 
-input()
+# Recebendo token do servidor
+autenticacaoRes = AutenticacaoRes()
+autenticacaoRes.unpack(tcp.recv(autenticacaoRes.tamanho))
+token = autenticacaoRes.token
+print(f'Token recebido - {token}')
