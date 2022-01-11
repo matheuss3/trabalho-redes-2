@@ -1,5 +1,5 @@
 from socket import *
-from mensagens import AutenticacaoReq, AutenticacaoRes
+from mensagens import AutenticacaoReq, AutenticacaoRes, ListaPedidosReq, PedidoRes
 import util
 import _thread
 import uuid
@@ -36,6 +36,29 @@ def atendeCliente(conexao, cliente):
   print(f'Token gerado para o usuário - {token}')
   autenticacaoRes = AutenticacaoRes()
   conexao.send(autenticacaoRes.pack(token))
+
+  solListaPedidos = ListaPedidosReq()
+  solListaPedidos.unpack(conexao.recv(solListaPedidos.tamanho))
+  
+  if solListaPedidos.token != token:
+    conexao.close()
+    print('Conexão encerrada')
+    _thread.exit()
+  
+  pedidos = util.getPedidosUsuario(idUsuario)
+
+  print(pedidos)
+  
+  for pedido in pedidos:
+    pedidoRes = PedidoRes()
+    flag = 0
+    if pedido == pedidos[-1]:
+      flag = 1
+
+    conexao.send(pedidoRes.pack(pedido['id'], pedido['idItem'], pedido['quantidade'], pedido['valorUnitario'], flag))
+
+
+
 
 # Configuração do socket tcp
 tcp = socket(AF_INET, SOCK_STREAM)
