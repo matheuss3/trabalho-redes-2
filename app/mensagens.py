@@ -29,18 +29,21 @@ class AutenticacaoReq(Mensagem):
 
 class AutenticacaoRes(Mensagem):
 	token = None
+	mensagem = None
 
 	def __init__(self):
-		super().__init__(2, 8, '!II')
+		super().__init__(2, 58, '!I50si')
 	
-	def pack(self, token):
+	def pack(self, mensagem, token):
+		self.mensagem = mensagem
 		self.token = token
 		
-		return struct.pack(self.formato, self.codMensagem, token)
+		return struct.pack(self.formato, self.codMensagem, self.mensagem.encode(), token)
 	
 	def unpack(self, msg):
-		codMensagem, token = struct.unpack(self.formato, msg)
+		codMensagem, mensagem, token = struct.unpack(self.formato, msg)
 
+		self.mensagem = mensagem.decode()
 		self.token = token
 
 class ListaPedidosReq(Mensagem):
@@ -83,6 +86,52 @@ class PedidoRes(Mensagem):
 
 		self.idPedido = idPedido
 		self.item = item.decode()
+		self.quantidade = quantidade
+		self.valorUnitario = valorUnitario
+		self.flag = flag
+
+class EstoqueReq(Mensagem):
+
+	token = None
+
+	def __init__(self):
+		super().__init__(5, 8, '!II')
+	
+	def pack(self, token):
+		self.token = token
+		
+		return struct.pack(self.formato, self.codMensagem, token)
+	
+	def unpack(self, msg):
+		codMensagem, token = struct.unpack(self.formato, msg)
+
+		self.token = token
+
+class EstoqueRes(Mensagem):
+	
+	item = None
+	descricao = None
+	quantidade = None
+	valorUnitario = None
+
+	def __init__(self):
+		super().__init__(6, 86, '!I20s50sIfI') 
+	
+	def pack(self, item, descricao, quantidade, valorUnitario, flag):
+		
+		self.item = item
+		self.descricao = descricao
+		self.quantidade = quantidade
+		self.valorUnitario = valorUnitario
+		self.flag = flag
+		
+		return struct.pack(self.formato, self.codMensagem, self.item.encode(), self.descricao.encode(), self.quantidade, self.valorUnitario, self.flag)
+	
+	def unpack(self, msg):
+		codMensagem, item, descricao, quantidade, valorUnitario, flag = struct.unpack(self.formato, msg)
+
+		self.item = item.decode()
+		self.descricao = descricao.decode()
 		self.quantidade = quantidade
 		self.valorUnitario = valorUnitario
 		self.flag = flag
