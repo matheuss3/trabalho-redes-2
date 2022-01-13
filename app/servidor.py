@@ -52,7 +52,7 @@ def atendeCliente(conexao, cliente):
   solListaPedidos = ListaPedidosReq()
   solListaPedidos.unpack(conexao.recv(solListaPedidos.tamanho))
   
-  #não tem permissão
+  #não tem permissão para acessar lista de pedidos
   if solListaPedidos.token != token: 
     conexao.close()
     print('Conexão encerrada')
@@ -74,13 +74,13 @@ def atendeCliente(conexao, cliente):
   solListaEstoque = EstoqueReq()
   solListaEstoque.unpack(conexao.recv(solListaEstoque.tamanho))
   
-  #não tem permissão
+  #não tem permissão para acessar estoque
   if solListaEstoque.token != token: 
     conexao.close()
     print('Conexão encerrada')
     _thread.exit()
 
-  #Acessando estoque 
+  #Pegando estoque 
   estoque = util.getEstoque()
   print(estoque)
 
@@ -92,12 +92,14 @@ def atendeCliente(conexao, cliente):
       flag = 1
     conexao.send(estoqueRes.pack(e['item'], e['descricao'], e['quantidade'], e['valorUnitario'], flag))
   
+  # Recebendo se o cliente deseja realizar um pedido
   criacaoPedidoReq = CriacaoPedidoReq()
   criacaoPedidoReq.unpack(conexao.recv(criacaoPedidoReq.tamanho))
-  while criacaoPedidoReq.flag == 1:
+  while criacaoPedidoReq.flag == 1: 
     listaItensPedido = []
+    
     # Recebe pedidos do cliente
-    while True:
+    while True: # Percorre itens do pedido até o pedido acabar
       pedidoClienteRes = PedidoClienteRes()
       pedidoClienteRes.unpack(conexao.recv(pedidoClienteRes.tamanho))
 
@@ -106,26 +108,54 @@ def atendeCliente(conexao, cliente):
         'qtdPedida': pedidoClienteRes.quantidade
       }
 
-      listaItensPedido.append(itemPedido)
-
+      listaItensPedido.append(itemPedido) # Pedido do cliente
+      
+      #Imprimindo pedido do cliente
+      print('Imprimindo pedido recebido: ')
       print(f'Item: {pedidoClienteRes.item}')
       print(f'Quantidade: {pedidoClienteRes.quantidade}')
       print(f'Valor Unitario: {pedidoClienteRes.valorUnitario}')
       print(f'Flag: {pedidoClienteRes.flag}')
       print('############################')
 
-      
       if pedidoClienteRes.flag == 1:
         break
     
+    #Verifica disponibilidade do pedido recebido
     pedido, estoqueAtualizado = util.atendePedidoCliente(listaItensPedido)
 
-    if not pedido:
+    #Informa cliente que pedido não tem disponibilidade
+    if not pedido: # Não tem disponibilidade de estoque
       print('Pedido rejeitado')
-      # Enviar mensagem para o cliente
+
+      disponibilidadeRes = DisponibilidadeRes()
+      msg = disponibilidadeRes.pack('Pedido rejeitado - Não há disponibilidade de estoque', -1)
+      conexao.send(msg)
+
+    # Informa cliente que pedido tem disponibilidade
+    disponibilidadeRes = DisponibilidadeRes()
+    msg = disponibilidadeRes.pack('Pedido aceito - Há disponibilidade de estoque', token)
+    conexao.send(msg)
+    print('Pedido efetuado com sucesso')
     print(pedido)
-    #enviar estoque atualizado
+
+    #Salvando pedido realizado no arquivo de pedidos
+    util.atualizaPedidos(pedido,idUsuario)
+
+    #Enviando estoque atualizado para cliente
+    for e in estoqueAtualizado:
+      estoqueRes = EstoqueRes()
+      flag = 0
+      if e == estestoqueAtualizado[-1]: #se for a última linha
+        flag = 1
+      conexao.send(estoqueRes.pack(e['item'], e['descricao'], e['quantidade'], e['valorUnitario'], flag))
+    #criar função recebe estoque (pq toda hora ele atualiza)
+    
     criacaoPedidoReq.unpack(conexao.recv(criacaoPedidoReq.tamanho))
+  else:  #Não quer criar novo pedido
+    conexao.close()
+    print('Conexão encerrada')
+    _thread.exit()
 
 
 # Configuração do socket tcp
@@ -134,6 +164,6 @@ tcp.bind((HOST, PORT))
 tcp.listen(10)
 
 while True:
-  con, cliente = tcp.accept()
-  _thread.start_new_thread(atendeCliente, (con, cliente))
+  con, cliente = tcp.accept()  #aceita conexão
+  _thread.start_new_thread(atendeCliente, (con, cliente))   #começa uma nova thread
 

@@ -181,3 +181,23 @@ class PedidoClienteRes(Mensagem):
 		self.valorUnitario = valorUnitario
 		self.flag = flag
 
+class DisponibilidadeRes(Mensagem):
+
+	token = None
+	mensagem = None
+
+	def __init__(self):
+		super().__init__(9, 78, '!I70si')
+	
+	def pack(self, mensagem, token):
+		self.mensagem = mensagem
+		self.token = token
+		
+		return struct.pack(self.formato, self.codMensagem, self.mensagem.encode(), token)
+	
+	def unpack(self, msg):
+		codMensagem, mensagem, token = struct.unpack(self.formato, msg)
+
+		self.mensagem = removeNulls(mensagem.decode())
+		self.token = token
+

@@ -28,6 +28,7 @@ def main(login, senha):
   print(autenticacaoRes.mensagem)
   print(f'Token recebido : {token}')
 
+  # Encerrando conexão caso token não tenha sido gerado
   if (token == -1):
     print('Conexão encerrada')
     tcp.close()
@@ -55,8 +56,8 @@ def main(login, senha):
   solListaEstoque = EstoqueReq()
   tcp.send(solListaEstoque.pack(token))
 
+  # Recebendo estoque
   estoque = []
-  # Recebe estoque
   while True:
 
     estoqueRes= EstoqueRes()
@@ -69,6 +70,7 @@ def main(login, senha):
     }
     estoque.append(item)
 
+    #Imprimindo estoque
     print(f'Item: {estoqueRes.item}')
     print(f'Descrição: {estoqueRes.descricao}')
     print(f'Quantidade: {estoqueRes.quantidade}')
@@ -79,17 +81,22 @@ def main(login, senha):
     if estoqueRes.flag == 1:
       break
 
-  # Cria pedidos
+  # Escolhe se deseja realizar pedido
   print(dest, "Servidor: Deseja criar um pedido? \n")
   escolha = random.randint(0,1)
-  criacaoPedidoReq = CriacaoPedidoReq()
+
+  #Enviando pro servidor a escolha 
+  criacaoPedidoReq = CriacaoPedidoReq() 
   msg = criacaoPedidoReq.pack(escolha, token)
   tcp.send(msg)
+
   while (escolha == 1):
+
+    # Cria pedido 
     pedidos = util.criaPedidoConsumidor(estoque)
     print(pedidos)
 
-    #FALTA ENVIAR OS PEDIDOS PRO SERVER
+    # Enviando pedido pro servidor
     for pedido in pedidos:
       pedidoClienteRes = PedidoClienteRes()
       flag = 0
@@ -98,8 +105,52 @@ def main(login, senha):
       
       msg = pedidoClienteRes.pack(pedido['item'], pedido['qtdPedida'], pedido['valorUnitario'], flag)
       tcp.send(msg)
+
+    # Recebe se pedido tem disponibilidade
+    disponibilidadeRes = DisponibilidadeRes()
+    disponibilidadeRes.unpack(tcp.recv(disponibilidadeRes.tamanho))
+    token = disponibilidadeRes.token
+    print(disponibilidadeRes.mensagem) #PRINTAR DIREITO
+
+    # Conexão encerrada devido a falta de disponibilidade em estoque
+    if token == -1: # Não tem disponibilidade
+      print('Conexão encerrada')
+      tcp.close()
+      exit()
+
+    print('Pedido gerado com sucesso!')
+
+    #Imprimindo estoque atualizado
+    print('Imprimindo estoque atualizado')
+
+    #=================================
+    # Recebendo estoque
+    estoque = []
+    while True:
+
+      estoqueRes = EstoqueRes()
+      estoqueRes.unpack(tcp.recv(estoqueRes.tamanho))
+      item = {
+        'item' : estoqueRes.item,
+        'descricao' : estoqueRes.descricao,
+        'quantidade' : estoqueRes.quantidade,
+        'valorUnitario' : estoqueRes.valorUnitario 
+      }
+      estoque.append(item)
+
+      #Imprimindo estoque
+      print(f'Item: {estoqueRes.item}')
+      print(f'Descrição: {estoqueRes.descricao}')
+      print(f'Quantidade: {estoqueRes.quantidade}')
+      print(f'Valor Unitario: {estoqueRes.valorUnitario}')
+      print(f'Flag: {estoqueRes.flag}')
+      print('############################')
+
+      if estoqueRes.flag == 1:
+        break
+    #=============================
     
-    print(dest, "Servidor: Deseja criar um pedido? \n")
+    print(dest, "Servidor: Deseja criar um novo pedido? \n")
     escolha = random.randint(0,1)
     msg = criacaoPedidoReq.pack(escolha, token)
     tcp.send(msg)
@@ -109,8 +160,6 @@ def main(login, senha):
     tcp.close()
     exit()
   
-  #FALTA VERIFICAR QTD EM ESTOQUE (DISPONIBILIDADE)
-
 if __name__ == '__main__':
   if len(sys.argv) == 3:
     main(sys.argv[1], sys.argv[2])

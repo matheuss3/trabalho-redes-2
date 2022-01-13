@@ -96,7 +96,6 @@ def getEstoque():
 def criaPedidoConsumidor(estoque): #item, qtd e valorUnit
   copyEstoque = estoque[:]
 
-
   itensPedido = []
   
   r = 5
@@ -140,7 +139,8 @@ def procuraItemEstoque(item, estoque):
       return itemEstoque
 
 
-def atendePedidoCliente(pedidoCliente):
+def atendePedidoCliente(pedidoCliente):  
+
   estoque = getEstoque()
   pedido = { 'numero_pedido': random.randint(1, 1000000), 'vlTotal': 0, 'itens': [] }
 
@@ -163,3 +163,16 @@ def atendePedidoCliente(pedidoCliente):
 
   atualizaEstoque(estoque)
   return pedido, getEstoque()
+
+def atualizaPedidos(pedido, idCliente): #atualiza o arquivo de pedidos
+
+  filePedidos = open('../dados/pedidos.csv', 'a')
+
+  for itemPedido in pedido['itens']:
+    
+    idPedido = pedido['numero_pedido']
+    idItem = itemPedido['item']
+    quantidade = itemPedido['quantidade']
+    valor_unitario = itemPedido['valorUnitario']
+
+    filePedidos.write(f'{idPedido};{idCliente};{idItem};{quantidade};{valor_unitario}\n')
