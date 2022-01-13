@@ -21,6 +21,10 @@ def getUsuarios():
   
   return usuarios
 
+def removeNulls(a):
+  b = a.replace('\x00', '')
+  return b
+
 def comparaStrings(a, b):
   a = a.replace('\x00', '')
   b = b.replace('\x00', '')
@@ -90,20 +94,72 @@ def getEstoque():
   return listaEstoque
 
 def criaPedidoConsumidor(estoque): #item, qtd e valorUnit
+  copyEstoque = estoque[:]
+
+
   itensPedido = []
+  
+  r = 5
+  i = 0
 
-  for i in range(5):
-    itemSelected = random.choice(estoque)
+  while r > 0 and i < 5:
+    itemSelected = copyEstoque.pop(random.randint(0, len(copyEstoque) - 1))
 
-    itemExists = False
-    for itemPedido in itensPedido:
-      if itemPedido['item'] == itemSelected['item']:
-        itemPedido['qtdPedida'] += 1
-        itemExists = True
-        break
-    
-    if not itemExists:
-      itemPedido = { 'item': itemSelected['item'], 'qtdPedida': 1, 'valorUnitario' : itemSelected['valorUnitario'] }
+    a = 0
+    if itemSelected['quantidade'] >= r:
+      a = random.randint(1, r)
+    elif itemSelected['quantidade'] > 0:
+      a = random.randint(1, itemSelected['quantidade'])
+    r -= a
+    i += 1
+
+    if a > 0:
+      itemPedido = { 'item': itemSelected['item'], 'qtdPedida': a, 'valorUnitario' : itemSelected['valorUnitario'] }
       itensPedido.append(itemPedido)
     
   return itensPedido
+
+def atualizaEstoque(estoque):
+  fileEstoque = open('../dados/estoque.csv', 'w')
+
+  fileEstoque.write('id;item;descricao;quantidade;valor_unitario\n')
+
+  for itemEstoque in estoque:
+    idEstoque = itemEstoque['id']
+    item = itemEstoque['item']
+    descricao = itemEstoque['descricao']
+    qtdEstoque = itemEstoque['quantidade']
+    vlUnitario = itemEstoque['valorUnitario']
+
+    fileEstoque.write(f'{idEstoque};{item};{descricao};{qtdEstoque};{vlUnitario}\n')
+
+
+def procuraItemEstoque(item, estoque):
+  for itemEstoque in estoque:
+    if itemEstoque['item'] == item:
+      return itemEstoque
+
+
+def atendePedidoCliente(pedidoCliente):
+  estoque = getEstoque()
+  pedido = { 'numero_pedido': random.randint(1, 1000000), 'vlTotal': 0, 'itens': [] }
+
+  for itemPedido in pedidoCliente:
+    itemEstoque = procuraItemEstoque(itemPedido['item'], estoque)
+    itemEstoque['quantidade'] -= itemPedido['qtdPedida']
+
+    if itemEstoque['quantidade'] < 0:
+      return None, getEstoque()
+    
+    pedido['itens'].append({
+      'item': itemPedido['item'],
+      'quantidade': itemPedido['qtdPedida'],
+      'valorUnitario': itemEstoque['valorUnitario']
+    })
+
+    pedido['vlTotal'] += itemEstoque['valorUnitario'] * itemPedido['qtdPedida']
+
+  # Salvar pedido
+
+  atualizaEstoque(estoque)
+  return pedido, getEstoque()

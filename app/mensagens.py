@@ -1,5 +1,6 @@
+from os import remove
 import struct
-import uuid
+from util import removeNulls
 
 class Mensagem:
 	def __init__(self, codMensagem, tamanho, formato):
@@ -23,8 +24,8 @@ class AutenticacaoReq(Mensagem):
 	def unpack(self, msg):
 		codMensagem, login, senha = struct.unpack(self.formato, msg)
 
-		self.login = login.decode()
-		self.senha = senha.decode()
+		self.login = removeNulls(login.decode())
+		self.senha = removeNulls(senha.decode())
 
 
 class AutenticacaoRes(Mensagem):
@@ -43,7 +44,7 @@ class AutenticacaoRes(Mensagem):
 	def unpack(self, msg):
 		codMensagem, mensagem, token = struct.unpack(self.formato, msg)
 
-		self.mensagem = mensagem.decode()
+		self.mensagem = removeNulls(mensagem.decode())
 		self.token = token
 
 class ListaPedidosReq(Mensagem):
@@ -85,7 +86,7 @@ class PedidoRes(Mensagem):
 		codMensagem, idPedido, item, quantidade, valorUnitario, flag = struct.unpack(self.formato, msg)
 
 		self.idPedido = idPedido
-		self.item = item.decode()
+		self.item = removeNulls(item.decode())
 		self.quantidade = quantidade
 		self.valorUnitario = valorUnitario
 		self.flag = flag
@@ -130,8 +131,53 @@ class EstoqueRes(Mensagem):
 	def unpack(self, msg):
 		codMensagem, item, descricao, quantidade, valorUnitario, flag = struct.unpack(self.formato, msg)
 
-		self.item = item.decode()
-		self.descricao = descricao.decode()
+		self.item = removeNulls(item.decode())
+		self.descricao = removeNulls(descricao.decode())
 		self.quantidade = quantidade
 		self.valorUnitario = valorUnitario
 		self.flag = flag
+
+class CriacaoPedidoReq(Mensagem):
+	flag = None
+	token = None
+
+	def __init__(self):
+		super().__init__(7, 12, '!III')
+	
+	def pack(self, flag, token):
+		self.flag = flag
+		self.token = token
+
+		return struct.pack(self.formato, self.codMensagem, self.flag, self.token)
+	
+	def unpack(self, msg):
+		codMensagem, flag, token = struct.unpack(self.formato, msg)
+		
+		self.flag = flag
+		self.token = token
+
+class PedidoClienteRes(Mensagem):
+	item = None
+	quantidade = None
+	valorUnitario = None
+	flag = None
+
+	def __init__(self):
+		super().__init__(8, 36, '!I20sIfI')
+	
+	def pack(self, item, quantidade, valorUnitario, flag):
+		self.item = item
+		self.quantidade = quantidade
+		self.valorUnitario = valorUnitario
+		self.flag = flag
+		
+		return struct.pack(self.formato, self.codMensagem, self.item.encode(), self.quantidade, self.valorUnitario, self.flag)
+	
+	def unpack(self, msg):
+		codMensagem, item, quantidade, valorUnitario, flag = struct.unpack(self.formato, msg)
+
+		self.item = removeNulls(item.decode())
+		self.quantidade = quantidade
+		self.valorUnitario = valorUnitario
+		self.flag = flag
+

@@ -1,8 +1,7 @@
 from socket import *
-from mensagens import AutenticacaoReq, AutenticacaoRes, EstoqueReq, EstoqueRes, ListaPedidosReq, PedidoRes
+from mensagens import *
 import util
 import _thread
-import uuid
 import random
 
 # Dados da conexão
@@ -92,6 +91,41 @@ def atendeCliente(conexao, cliente):
     if e == estoque[-1]: #se for a última linha
       flag = 1
     conexao.send(estoqueRes.pack(e['item'], e['descricao'], e['quantidade'], e['valorUnitario'], flag))
+  
+  criacaoPedidoReq = CriacaoPedidoReq()
+  criacaoPedidoReq.unpack(conexao.recv(criacaoPedidoReq.tamanho))
+  while criacaoPedidoReq.flag == 1:
+    listaItensPedido = []
+    # Recebe pedidos do cliente
+    while True:
+      pedidoClienteRes = PedidoClienteRes()
+      pedidoClienteRes.unpack(conexao.recv(pedidoClienteRes.tamanho))
+
+      itemPedido = {
+        'item': pedidoClienteRes.item,
+        'qtdPedida': pedidoClienteRes.quantidade
+      }
+
+      listaItensPedido.append(itemPedido)
+
+      print(f'Item: {pedidoClienteRes.item}')
+      print(f'Quantidade: {pedidoClienteRes.quantidade}')
+      print(f'Valor Unitario: {pedidoClienteRes.valorUnitario}')
+      print(f'Flag: {pedidoClienteRes.flag}')
+      print('############################')
+
+      
+      if pedidoClienteRes.flag == 1:
+        break
+    
+    pedido, estoqueAtualizado = util.atendePedidoCliente(listaItensPedido)
+
+    if not pedido:
+      print('Pedido rejeitado')
+      # Enviar mensagem para o cliente
+    print(pedido)
+    #enviar estoque atualizado
+    criacaoPedidoReq.unpack(conexao.recv(criacaoPedidoReq.tamanho))
 
 
 # Configuração do socket tcp
