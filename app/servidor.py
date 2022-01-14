@@ -1,3 +1,13 @@
+"""
+Disciplina de Redes de Computadores
+Autor:  Matheus de Souza e Thaís de Souza
+Matrícula: 20191bsi0301 e 20191bsi0263 
+Trabalho: Loja de produtos esportivos - Trabalho 2
+Semestre: 2021/2
+Data de conclusão: 12/01/2022
+"""
+
+
 from socket import *
 from mensagens import *
 import util
@@ -62,6 +72,11 @@ def atendeCliente(conexao, cliente):
   pedidos = util.getPedidosUsuario(idUsuario)
   print(pedidos)
   
+  #Enviando quantidade de pedidos que o cliente tem
+  possuiPedidos = PossuiPedidos()
+  msg = possuiPedidos.pack(len(pedidos))
+  conexao.send(msg)
+
   #Enviando lista de pedidos para usuário
   for pedido in pedidos:
     pedidoRes = PedidoRes()
@@ -146,7 +161,7 @@ def atendeCliente(conexao, cliente):
     for e in estoqueAtualizado:
       estoqueRes = EstoqueRes()
       flag = 0
-      if e == estestoqueAtualizado[-1]: #se for a última linha
+      if e == estoqueAtualizado[-1]: #se for a última linha
         flag = 1
       conexao.send(estoqueRes.pack(e['item'], e['descricao'], e['quantidade'], e['valorUnitario'], flag))
     #criar função recebe estoque (pq toda hora ele atualiza)

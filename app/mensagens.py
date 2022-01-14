@@ -1,3 +1,13 @@
+"""
+Disciplina de Redes de Computadores
+Autor:  Matheus de Souza e Thaís de Souza
+Matrícula: 20191bsi0301 e 20191bsi0263 
+Trabalho: Loja de produtos esportivos - Trabalho 2
+Semestre: 2021/2
+Data de conclusão: 12/01/2022
+"""
+
+
 from os import remove
 import struct
 from util import removeNulls
@@ -62,6 +72,23 @@ class ListaPedidosReq(Mensagem):
 		codMensagem, token = struct.unpack(self.formato, msg)
 
 		self.token = token
+
+class PossuiPedidos(Mensagem):
+	qtdPedidos = None
+
+	def __init__(self):
+		super().__init__(10, 8, '!II')
+	
+	def pack(self, qtdPedidos):
+		self.qtdPedidos = qtdPedidos
+		
+		return struct.pack(self.formato, self.codMensagem, self.qtdPedidos)
+	
+	def unpack(self, msg):
+		codMensagem, qtdPedidos = struct.unpack(self.formato, msg)
+
+		self.qtdPedidos = qtdPedidos
+
 
 class PedidoRes(Mensagem):
 	idPedido = None

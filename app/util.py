@@ -1,3 +1,13 @@
+"""
+Disciplina de Redes de Computadores
+Autor:  Matheus de Souza e Thaís de Souza
+Matrícula: 20191bsi0301 e 20191bsi0263 
+Trabalho: Loja de produtos esportivos - Trabalho 2
+Semestre: 2021/2
+Data de conclusão: 12/01/2022
+"""
+
+
 import random
 
 def getUsuarios():
@@ -167,7 +177,6 @@ def atendePedidoCliente(pedidoCliente):
 def atualizaPedidos(pedido, idCliente): #atualiza o arquivo de pedidos
 
   filePedidos = open('../dados/pedidos.csv', 'a')
-
   for itemPedido in pedido['itens']:
     
     idPedido = pedido['numero_pedido']
