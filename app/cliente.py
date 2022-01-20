@@ -7,44 +7,46 @@ Semestre: 2021/2
 Data de conclusão: 12/01/2022
 """
 
-
-
 import sys
 from socket import *
 import random
 import json
-
 import util
 from mensagens import *
 
 def main(login, senha):
+
   # Dados da conexão
   HOST = 'localhost'
   PORT = 3333
+
   # Configurando socket TCP
   tcp = socket(AF_INET, SOCK_STREAM)
+
+  # Solicitando nome do login e senha (já preenchendo)
+  print('\nOlá! Informe dados de login e senha:\n')
+  print(f'Usuário: {login}')
+  print(f'Senha: {senha}')
+  
+
+  # Conectando no servidor
   tcp.connect((HOST, PORT))
   dest = (HOST, PORT)
 
-  # Realizando login
-  print('Dados do usuário')
-  print(f'Usuário: {login}')
-  print(f'Senha: {senha}')
-  print()
-
-  # Autenticando usuário
+  # Pedindo requisição de autenticação
+  print('\nPedindo requisição de autenticação...')
   mensagemAutenticacao = AutenticacaoReq()
   msg = mensagemAutenticacao.pack(login, senha)
   tcp.send(msg)
 
-  # Recebendo token do servidor
+  # ---- Recebendo mensagem de resposta de autenticação ----
+  # token do servidor (token negativo caso: usuário não cadastrado ou senha incorreta)
   autenticacaoRes = AutenticacaoRes()
   msg = tcp.recv(autenticacaoRes.tamanho)
   autenticacaoRes.unpack(msg)
   token = autenticacaoRes.token
-  print('Token do servidor')
   print(autenticacaoRes.mensagem)
-  print(f'Token recebido : {token}')
+  print(f'{dest}: Token recebido : {token}')
   print()
 
   # Encerrando conexão caso token não tenha sido gerado
@@ -53,7 +55,10 @@ def main(login, senha):
     tcp.close()
     exit()
 
+
+#LOOP------------------------
   # Solicitando lista de pedidos
+  print("\nSolicitando os pedidos que já fiz...")
   solListaPedidos = ListaPedidosReq()
   msg = solListaPedidos.pack(token)
   tcp.send(msg)
@@ -62,7 +67,8 @@ def main(login, senha):
   msgQtdPedidos = PossuiPedidos()
   msg = tcp.recv(msgQtdPedidos.tamanho)
   msgQtdPedidos.unpack(msg)
-  print(f'Você possui {msgQtdPedidos.qtdPedidos} itens pedidos!')
+  print("Lista de pedidos recebida com sucesso!\n")
+  print(f'{dest}Você possui {msgQtdPedidos.qtdPedidos} itens pedidos!')
 
   # Recebe pedidos
   print('-----------------Meus pedidos----------------')
@@ -81,12 +87,14 @@ def main(login, senha):
   print('---------------------------------------------\n')
 
   #Solicitando lista de estoque
+  print("Solicitando estoque da loja...\n")
   solListaEstoque = EstoqueReq()
   msg = solListaEstoque.pack(token)
   tcp.send(msg)
 
-  print('--------------Estoque da loja----------------')
   # Recebendo estoque
+  print("Estoque recebido com sucesso!\n")
+  print('--------------Estoque da loja----------------')
   estoque = []
   while True:
     estoqueRes= EstoqueRes()
@@ -111,22 +119,28 @@ def main(login, senha):
       break
   print('---------------------------------------------\n')
 
-  # Escolhe se deseja realizar pedido
+  # Escolhe de forma aleatória se deseja realizar pedido
   print('Deseja criar um pedido?', end=' ')
   escolha = random.randint(0,1)
+
   #Enviando pro servidor a escolha 
   criacaoPedidoReq = CriacaoPedidoReq() 
   msg = criacaoPedidoReq.pack(escolha, token)
   tcp.send(msg)
 
+  #Fica fazendo pedidos 
   while (escolha == 1):
+
     print('Sim 😀')
+
     # Cria pedido 
+    print("Criando pedido...\n")
     pedidos = util.criaPedidoConsumidor(estoque)
 
     print('------------Novo pedido------------')
     print(json.dumps(pedidos, indent=2))
     print('-----------------------------------\n')
+    
     # Enviando pedido pro servidor
     for pedido in pedidos:
       pedidoClienteRes = PedidoClienteRes()

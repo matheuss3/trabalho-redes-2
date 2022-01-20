@@ -7,11 +7,11 @@ Semestre: 2021/2
 Data de conclusão: 12/01/2022
 """
 
-
 from os import remove
 import struct
 from util import removeNulls
 
+#Definindo a classe Mensagem  (com os atributos fixos de todas as mensagens)
 class Mensagem:
 	def __init__(self, codMensagem, tamanho, formato):
 		self.codMensagem = codMensagem
@@ -77,7 +77,7 @@ class PossuiPedidos(Mensagem):
 	qtdPedidos = None
 
 	def __init__(self):
-		super().__init__(10, 8, '!II')
+		super().__init__(4, 8, '!II')
 	
 	def pack(self, qtdPedidos):
 		self.qtdPedidos = qtdPedidos
@@ -98,7 +98,7 @@ class PedidoRes(Mensagem):
 	flag = None
 
 	def __init__(self):
-		super().__init__(4, 40, '!II20sIfI')
+		super().__init__(5, 40, '!II20sIfI')
 	
 	def pack(self, idPedido, item, quantidade, valorUnitario, flag):
 		self.idPedido = idPedido
@@ -123,7 +123,7 @@ class EstoqueReq(Mensagem):
 	token = None
 
 	def __init__(self):
-		super().__init__(5, 8, '!II')
+		super().__init__(6, 8, '!II')
 	
 	def pack(self, token):
 		self.token = token
@@ -143,7 +143,7 @@ class EstoqueRes(Mensagem):
 	valorUnitario = None
 
 	def __init__(self):
-		super().__init__(6, 86, '!I20s50sIfI') 
+		super().__init__(7, 86, '!I20s50sIfI') 
 	
 	def pack(self, item, descricao, quantidade, valorUnitario, flag):
 		
@@ -169,7 +169,7 @@ class CriacaoPedidoReq(Mensagem):
 	token = None
 
 	def __init__(self):
-		super().__init__(7, 12, '!III')
+		super().__init__(8, 12, '!III')
 	
 	def pack(self, flag, token):
 		self.flag = flag
@@ -190,7 +190,7 @@ class PedidoClienteRes(Mensagem):
 	flag = None
 
 	def __init__(self):
-		super().__init__(8, 36, '!I20sIfI')
+		super().__init__(9, 36, '!I20sIfI')
 	
 	def pack(self, item, quantidade, valorUnitario, flag):
 		self.item = item
@@ -214,7 +214,7 @@ class DisponibilidadeRes(Mensagem):
 	mensagem = None
 
 	def __init__(self):
-		super().__init__(9, 78, '!I70si')
+		super().__init__(10, 78, '!I70si')
 	
 	def pack(self, mensagem, token):
 		self.mensagem = mensagem

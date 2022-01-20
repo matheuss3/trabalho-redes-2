@@ -45,7 +45,6 @@ def getUsuario(login):
   usuarios = getUsuarios()
   for usuario in usuarios:
     if comparaStrings(usuario['login'], login):
-      print(usuario)
       return usuario
   
   return None
