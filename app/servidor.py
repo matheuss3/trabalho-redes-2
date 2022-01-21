@@ -127,29 +127,36 @@ def atendeCliente(conexao, cliente):
       # Recebe pedidos do cliente
       print('\nImprimindo pedido recebido: ')
       print('\n############################')
-      while True: # Percorre itens do pedido até o pedido acabar
-        pedidoClienteRes = PedidoClienteRes()
-        pedidoClienteRes.unpack(conexao.recv(pedidoClienteRes.tamanho))
+      try:
+        while True: # Percorre itens do pedido até o pedido acabar
+          pedidoClienteRes = PedidoClienteRes()
 
-        itemPedido = {
-          'item': pedidoClienteRes.item,
-          'qtdPedida': pedidoClienteRes.quantidade
-        }
+          
+          pedidoClienteRes.unpack(conexao.recv(pedidoClienteRes.tamanho))
+          
 
-        listaItensPedido.append(itemPedido) # Pedido do cliente
-        
-        #Imprimindo pedido do cliente
-        print(f'Item: {pedidoClienteRes.item}')
-        print(f'Quantidade: {pedidoClienteRes.quantidade}')
-        print(f'Valor Unitario: {pedidoClienteRes.valorUnitario}')
-        print(f'Flag: {pedidoClienteRes.flag}')
-        print('############################')
+          itemPedido = {
+            'item': pedidoClienteRes.item,
+            'qtdPedida': pedidoClienteRes.quantidade
+          }
 
-        if pedidoClienteRes.flag == 1:
+          listaItensPedido.append(itemPedido) # Pedido do cliente
+          
+          #Imprimindo pedido do cliente
+          print(f'Item: {pedidoClienteRes.item}')
+          print(f'Quantidade: {pedidoClienteRes.quantidade}')
+          print(f'Valor Unitario: {pedidoClienteRes.valorUnitario}')
+          print(f'Flag: {pedidoClienteRes.flag}')
+          print('############################')
+
+          if pedidoClienteRes.flag == 1:
+            break
+      except:
+          print('-----------O cliente encerrou a conexão-----------')
           break
       
       #Verifica disponibilidade do pedido recebido
-      pedido, estoqueAtualizado = util.atendePedidoCliente(listaItensPedido)
+      pedido = util.atendePedidoCliente(listaItensPedido)
 
       #Informa cliente que pedido não tem disponibilidade
       if not pedido: # Não tem disponibilidade de estoque

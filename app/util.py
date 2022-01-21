@@ -8,6 +8,7 @@ Data de conclusão: 12/01/2022
 """
 
 
+from copy import copy
 import random
 
 def getUsuarios():
@@ -105,6 +106,13 @@ def getEstoque():
 def criaPedidoConsumidor(estoque): #item, qtd e valorUnit
   copyEstoque = estoque[:]
 
+  for item in copyEstoque:
+    if item['quantidade'] == 0:
+      copyEstoque.remove(item)
+
+  if len(copyEstoque) == 0:
+    return None
+
   itensPedido = []
   
   r = 5
@@ -171,7 +179,7 @@ def atendePedidoCliente(pedidoCliente):
   # Salvar pedido
 
   atualizaEstoque(estoque)
-  return pedido, getEstoque()
+  return pedido
 
 def atualizaPedidos(pedido, idCliente): #atualiza o arquivo de pedidos
 

@@ -140,11 +140,14 @@ def main(login, senha):
       # Cria pedido 
       print("Criando pedido...\n")
       pedidos = util.criaPedidoConsumidor(estoque)
+      if (pedidos):
+        print('------------Novo pedido------------')
+        print(json.dumps(pedidos, indent=2))
+        print('-----------------------------------\n')
+      else:
+        print('-----Loja sem estoque de itens-----')
+        encerraConexao(tcp)
 
-      print('------------Novo pedido------------')
-      print(json.dumps(pedidos, indent=2))
-      print('-----------------------------------\n')
-      
       # Enviando pedido pro servidor
       for pedido in pedidos:
         pedidoClienteRes = PedidoClienteRes()
