@@ -125,8 +125,7 @@ def main(login, senha):
 
     # Escolhe de forma aleatória se deseja realizar pedido
     print('Deseja criar um pedido?', end=' ')
-    escolha = random.randint(1,1)
-    sleep(13)
+    escolha = random.randint(0,1)
 
     #Enviando pro servidor a escolha 
     criacaoPedidoReq = CriacaoPedidoReq() 
