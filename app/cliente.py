@@ -4,7 +4,7 @@ Autor:  Matheus de Souza e Thaís de Souza
 Matrícula: 20191bsi0301 e 20191bsi0263 
 Trabalho: Loja de produtos esportivos - Trabalho 2
 Semestre: 2021/2
-Data de conclusão: 12/01/2022
+Data de conclusão: 15/01/2022
 """
 
 import sys

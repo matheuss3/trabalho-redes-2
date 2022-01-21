@@ -1,11 +1,22 @@
 id;item;descricao;quantidade;valor_unitario
-1;bola;muito boa;0;40.0
-2;chuteira;muito bom;0;100.0
-3;tenis;apertado mas macio;0;35.0
-4;mochila;grande e bonita;0;60.0
-5;chinelo;lindo;0;20.0
-6;bermuda;Bermuda muito confortavel;0;35.0
-7;camisa;Camisa muito bonita;0;40.0
-8;blusa;Blusa grande;0;25.0
-9;bolsa;Bolsa pequena;0;50.0
-10;cone;Cone laranja;0;32.0
+1;bola;muito boa;10;40.0
+2;chuteira;muito bom;10;100.0
+3;tenis;apertado mas macio;10;35.0
+4;mochila;grande e bonita;10;60.0
+5;chinelo;lindo;10;20.0
+6;bermuda;Bermuda muito confortavel;10;35.0
+7;camisa;Camisa muito bonita;10;40.0
+8;blusa;Blusa grande;10;25.0
+9;bolsa;Bolsa pequena;10;50.0
+10;cone;Cone laranja;10;32.0
+11;raquete;raquete bem firme;6;19.99
+12;short;short bom;1;29.99
+13;meiao;meiao tamanho normal;9;20.0
+14;elastico;muito legal;8;10.0
+15;patinete;muito rapido;2;80.0
+16;colete;muito bonito;4;20.0
+17;tatame;bem grande;6;80.0
+18;massageador;muito relaxante;2;150.0
+19;skate;muito bom;10;80.0
+20;protecao;muito boa;3;40.0
+21;patins;muito bonito e rapido;8;150.0
