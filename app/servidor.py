@@ -157,6 +157,7 @@ def atendeCliente(conexao, cliente):
       
       #Verifica disponibilidade do pedido recebido
       pedido = util.atendePedidoCliente(listaItensPedido)
+      util.atualizaEstoque(estoque)
 
       #Informa cliente que pedido não tem disponibilidade
       if not pedido: # Não tem disponibilidade de estoque

@@ -175,10 +175,6 @@ def atendePedidoCliente(pedidoCliente):
     })
 
     pedido['vlTotal'] += itemEstoque['valorUnitario'] * itemPedido['qtdPedida']
-
-  # Salvar pedido
-
-  atualizaEstoque(estoque)
   return pedido
 
 def atualizaPedidos(pedido, idCliente): #atualiza o arquivo de pedidos
