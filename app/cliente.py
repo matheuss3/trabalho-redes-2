@@ -44,7 +44,6 @@ def main(login, senha):
   msg = mensagemAutenticacao.pack(login, senha)
   tcp.send(msg)
 
-  # ---- Recebendo mensagem de resposta de autenticação ----
   # token do servidor (token negativo caso: usuário não cadastrado ou senha incorreta)
   autenticacaoRes = AutenticacaoRes()
   msg = tcp.recv(autenticacaoRes.tamanho)
@@ -133,7 +132,7 @@ def main(login, senha):
 
       # Enviando pro servidor a escolha 
       criacaoPedidoReq = CriacaoPedidoReq() 
-      msg = criacaoPedidoReq.pack(escolha, token)
+      msg = criacaoPedidoReq.pack(token)
       tcp.send(msg)
 
       # Cria pedido 
@@ -176,7 +175,7 @@ def main(login, senha):
       encerrarConReq = EncerrarConexaoReq() 
       msg = encerrarConReq.pack()
       tcp.send(msg)
-      print("Não") 
+      print("Não 😢") 
       encerraConexao(tcp)
   
 if __name__ == '__main__':

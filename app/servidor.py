@@ -143,6 +143,11 @@ def recvMsg(conexao, cliente, dadosSessao):
       criacaoPedidoReq = CriacaoPedidoReq()
       msg = buffer[:criacaoPedidoReq.tamanho]
       buffer = buffer[criacaoPedidoReq.tamanho:]
+      criacaoPedidoReq.unpack(msg)
+
+      # Não possui permissão para acessar lista de pedidos
+      if criacaoPedidoReq.token != dadosSessao["token"]: 
+        encerraConexao(conexao)
 
       # Lista dos itens passados pelo cliente
       listaItensPedido = []
@@ -246,7 +251,8 @@ def main():
   print('\n----------------------------------------------------------')
   print("Usuários cadastrados no sistema: \n")
   for uc in usuarios_cadastrados:
-      print('Id:',uc['id'],'  Nome:',uc['nome'],'  Login:', uc['login'],'  Senha:',uc['senha'])
+      print('Id:',uc['id'],'  Nome:',uc['nome'],
+        '  Login:', uc['login'],'  Senha:',uc['senha'])
   print('----------------------------------------------------------')
 
   # Aguardando por conexões

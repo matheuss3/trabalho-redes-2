@@ -1,11 +1,11 @@
 id;item;descricao;quantidade;valor_unitario
-1;bola;muito boa;7;40.0
-2;chuteira;muito bom;6;100.0
-3;tenis;apertado mas macio;10;35.0
-4;mochila;grande e bonita;9;60.0
-5;chinelo;lindo;4;20.0
-6;bermuda;Bermuda muito confortavel;8;35.0
-7;camisa;Camisa muito bonita;9;40.0
-8;blusa;Blusa grande;10;25.0
-9;bolsa;Bolsa pequena;1;50.0
-10;cone;Cone laranja;6;32.0
+1;bola;muito boa;0;40.0
+2;chuteira;muito bom;0;100.0
+3;tenis;apertado mas macio;0;35.0
+4;mochila;grande e bonita;0;60.0
+5;chinelo;lindo;0;20.0
+6;bermuda;Bermuda muito confortavel;0;35.0
+7;camisa;Camisa muito bonita;0;40.0
+8;blusa;Blusa grande;0;25.0
+9;bolsa;Bolsa pequena;0;50.0
+10;cone;Cone laranja;0;32.0

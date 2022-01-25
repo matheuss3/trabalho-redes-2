@@ -165,22 +165,19 @@ class EstoqueRes(Mensagem):
 		self.flag = flag
 
 class CriacaoPedidoReq(Mensagem):
-	flag = None
 	token = None
 
 	def __init__(self):
-		super().__init__(8, 12, '!III')
+		super().__init__(8, 8, '!II')
 	
-	def pack(self, flag, token):
-		self.flag = flag
+	def pack(self, token):
 		self.token = token
 
-		return struct.pack(self.formato, self.codMensagem, self.flag, self.token)
+		return struct.pack(self.formato, self.codMensagem, self.token)
 	
 	def unpack(self, msg):
-		codMensagem, flag, token = struct.unpack(self.formato, msg)
+		codMensagem, token = struct.unpack(self.formato, msg)
 		
-		self.flag = flag
 		self.token = token
 
 class PedidoClienteRes(Mensagem):
@@ -230,7 +227,7 @@ class DisponibilidadeRes(Mensagem):
 
 class EncerrarConexaoReq(Mensagem):
 	def __init__(self):
-		super().__init__(11, 0, '!I')
+		super().__init__(11, 4, '!I')
 	
 	def pack(self):
 		return struct.pack(self.formato, self.codMensagem)
