@@ -125,17 +125,16 @@ def main(login, senha):
 
     # Escolhe de forma aleatória se deseja realizar pedido
     print('Deseja criar um pedido?', end=' ')
-    escolha = random.randint(1,1)
-    sleep(13)
-
-    #Enviando pro servidor a escolha 
-    criacaoPedidoReq = CriacaoPedidoReq() 
-    msg = criacaoPedidoReq.pack(escolha, token)
-    tcp.send(msg)
+    escolha = random.randint(0,1)
 
     if (escolha == 1):
-    
+      
       print('Sim 😀')
+
+      # Enviando pro servidor a escolha 
+      criacaoPedidoReq = CriacaoPedidoReq() 
+      msg = criacaoPedidoReq.pack(escolha, token)
+      tcp.send(msg)
 
       # Cria pedido 
       print("Criando pedido...\n")
@@ -174,6 +173,9 @@ def main(login, senha):
       print('Pedido gerado com sucesso!')
       print()
     else:
+      encerrarConReq = EncerrarConexaoReq() 
+      msg = encerrarConReq.pack()
+      tcp.send(msg)
       print("Não") 
       encerraConexao(tcp)
   

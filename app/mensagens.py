@@ -228,3 +228,12 @@ class DisponibilidadeRes(Mensagem):
 		self.mensagem = removeNulls(mensagem.decode())
 		self.token = token
 
+class EncerrarConexaoReq(Mensagem):
+	def __init__(self):
+		super().__init__(11, 0, '!I')
+	
+	def pack(self):
+		return struct.pack(self.formato, self.codMensagem)
+	
+	def unpack(self, msg):
+		codMensagem, = struct.unpack(self.formato, msg)
